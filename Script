@@ -1,0 +1,73 @@
+import pandas as pd 
+import numpy as np 
+import matplotlib.pyplot as plt 
+import seaborn as sns
+
+
+data = pd.read_csv('C:/Users/Sanjana/Downloads/TRAIN.csv')
+
+
+del data['id']
+
+data.head()
+data['Gender'].value_counts()
+data.describe()
+
+data.columns
+
+data['Gender'].value_counts() #Gender, Vehicle_age,Vehicle_Damage re categorical columns will try to convert into numeric 
+
+data['Gender'] = data['Gender'].replace(['Male', 'Female'],[1,0])
+data['Gender'].value_counts()
+data.isnull().sum()  # They are no null values in the data.
+data['Vehicle_Age'].value_counts()
+data['Vehicle_Age'] = data['Vehicle_Age'].replace(['1-2 Year','< 1 Year','> 2 Years'],[1,0,2])
+data['Vehicle_Age'].value_counts()
+# < 1 year = 0
+# 1-2 Year = 1
+# > 2 years = 2
+data['Vehicle_Damage'].value_counts()
+data['Vehicle_Damage'] = data['Vehicle_Damage'].replace(['Yes','No'],[1,0])
+data.head()
+# Data Visualization
+#sns.countplot(data['Gender']);
+sns.countplot(x='Gender',data=data, palette='BuGn');
+
+X = data.iloc[:,:10]
+y = data.iloc[:,10:]
+
+#model building 
+from sklearn import metrics 
+from sklearn.linear_model import LogisticRegression
+from sklearn import neighbors
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.3)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+expected = y_test
+predicted = model.predict(X_test)
+print(metrics.classification_report(expected, predicted))
+print(metrics.confusion_matrix(expected, predicted))
+
+model_1 = DecisionTreeClassifier()
+model_1.fit(X_train,y_train)
+expect = y_test
+predict = model_1.predict(X_test)
+print(metrics.classification_report(expect, predict))
+print(metrics.confusion_matrix(expect, predict))
+
+
+model_2 = RandomForestClassifier()
+model_2.fit(X_train, y_train)
+e = y_test
+p = model_2.predict(X_test)
+print(metrics.classification_report(e, p))
+print(metrics.confusion_matrix(e, p))
+
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()  # if accuracy is low we can go with normalization techniques to increase the accuracy! 
